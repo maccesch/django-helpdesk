@@ -199,7 +199,8 @@ def ticket_from_message(message, queue, quiet):
         counter += 1
 
     if body_plain:
-        body = body_plain
+        # filter out some ugly tagging
+        body = re.sub('\[cid:.*?\](\s*<.*?>)?', '', body_plain)
     else:
         body = _('No plain-text email body available. Please see attachment email_html_body.html.')
 
