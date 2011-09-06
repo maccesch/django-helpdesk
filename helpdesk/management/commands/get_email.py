@@ -193,7 +193,9 @@ def ticket_from_message(message, queue, quiet):
             files.append({
                 'filename': name,
                 'content': part.get_payload(decode=True),
-                'type': part.get_content_type()},
+                'type': part.get_content_type(),
+                'id': part['content-id'][1:-1] if 'content-id' in part else None,
+                },               
                 )
 
         counter += 1
@@ -204,6 +206,9 @@ def ticket_from_message(message, queue, quiet):
         body = _('No plain-text email body available. Please see attachment email_html_body.html.')
 
     if body_html:
+        # only keep files that are not referenced from the body_html
+        files = filter_files(files, body_html)
+        
         files.append({
             'filename': _("email_html_body.html"),
             'content': body_html,
@@ -337,6 +342,16 @@ def ticket_from_message(message, queue, quiet):
                 print "    - %s" % filename
 
     return t
+
+
+def filter_files(files, body_html):
+    filtered_files = []
+    for file in files:
+        if not 'id' in file or not ('cid:' + file['id']) in body_html:
+            filtered_files.append(file)
+        
+    return filtered_files
+        
 
 
 if __name__ == '__main__':
