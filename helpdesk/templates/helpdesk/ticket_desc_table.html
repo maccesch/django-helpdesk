@@ -5,7 +5,7 @@
 
 <tr class='{% cycle 'row_odd' 'row_even' as rowcolors %}'>
     <th>{% trans "Submitted On" %}</th>
-    <td>{{ ticket.created|date:"r" }} ({{ ticket.created|timesince }} ago)</td>
+    <td>{{ ticket.created|date:"r" }} ({% blocktrans with ticket.created|timesince as time %}{{ time }} ago{% endblocktrans %})</td>
 </tr>
 
 <tr class='{% cycle rowcolors %}'>
